@@ -48,7 +48,7 @@ class Hello extends anu.Component {
             return h(
                 'div',
                 { key: item.key },
-                [h('div', null, item.content)]
+                [item.content]
             )
         }))
     }
