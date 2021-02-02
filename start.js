@@ -63,7 +63,6 @@ window.onload = function () {
     // var vnode2 = main();
     // console.log(vnode1.props === vnode2.props);
     //render4个参数， vnode, container, callback, clearContainer
-    // var result = anu.render(main(), document.getElementById('app'), null, false)
-    var result = anu.render(main(), document.getElementById('app'), null, true)
+    var result = anu.render(main(), document.getElementById('app'), null, false)
     console.log(result);
 }
