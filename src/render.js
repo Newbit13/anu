@@ -65,7 +65,7 @@ export default function render(subject, target, callback, hydration) {
     // h(Scoller, null, []) === > createComponentShape
     // Booleans, Null, and Undefined ==> createEmptyShape
     // String, Number ===> createTextShape
-    if (subject.render !== void 0) {
+    if (subject.render !== void 0) {//这情况一般出现在new一个class作为render第一个参数时出现，目前有bug
         vnode = createComponentShape(createClass(subject, null), objEmpty, arrEmpty);
     }
     // array/component/function
@@ -108,7 +108,7 @@ export default function render(subject, target, callback, hydration) {
         // destructive mount
         if (hydration === false) {
             while (element.firstChild) {
-                element.removeChild(element.firstChild)
+                element.removeChild(element.firstChild)//此时element是根容器，target | ducument.body
             }
         }
 
