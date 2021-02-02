@@ -53,9 +53,13 @@ class Hello extends anu.Component {
         }))
     }
 }
-
+function Ha(v){
+    console.log(v);
+    return h('h2', null, 'A');
+}
+// Ha['--func'] = true//要设置这个fn才能拿到props,且只执行一次
 function main() {
-    var vnode = h('h2', null, 'A', '你好', h(Hello), h('p'));
+    var vnode = h('h2', null, 'A', '你好', h(Hello), h(Ha,{good:233}));
     return vnode;
 }
 window.onload = function () {
