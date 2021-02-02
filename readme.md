@@ -1,5 +1,6 @@
 #anu
 =====
+启动live-server --middleware=yy
 
 读作 安努 ，苏美尔的主神，创天劈地。
 
@@ -56,3 +57,25 @@
 </html>
 ```
 
+```js
+//C:\Users\ASUS\AppData\Roaming\npm\node_modules\live-server\middleware\yy.js
+var path = require('path');
+var fs = require('fs');
+module.exports = function(req, res, next) {
+	if (req.method !== "GET" && req.method !== "HEAD")
+		next();
+	if (req.url !== '/' && path.extname(req.url) === '') {
+		var filePath = req.url + '.js';
+		fs.readFile(path.resolve(process.cwd() ,'./' +filePath),function (err,data) {
+			if (err) {
+				// console.log(err);
+				res.end('404');
+				return;
+			}
+			res.setHeader("Content-Type","text/javascript");
+			res.end(data)
+		})
+	}
+	else next();
+}
+```
