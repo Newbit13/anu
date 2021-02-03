@@ -4,6 +4,7 @@ import createClass from './component/createClass'
 import hydrate from './hydrate'
 import { createComponentShape, objEmpty, arrEmpty } from './shapes'
 import { appendNode, createNode } from './vnode'
+import { extractVirtualNode } from './extract'
 var browser = typeof window === 'object' && !!window.document
     //用到objEmpty, arrEmpty
 
@@ -13,44 +14,45 @@ var browser = typeof window === 'object' && !!window.document
  * @public
  * 
  * @param  {(Component|VNode|function|Object<string, any>)} subject
- * @param  {(Node|string)=}                                 target
+ * @param  {(Node)=}                                 target
  * @param  {function(this:Component, Node)=}                callback
  * @param  {boolean=}                                       hydration
  * @return {function(Object=)}
  */
 export default function render(subject, target, callback, hydration) {
-    var initial = true;
-    var nodeType = 2;
+    var initial = true
+    var nodeType = 2
 
-    var component;
-    var vnode;
-    var element;
+    var component
+    var vnode
+    var container
 
     // renderer
     function renderer(newProps) {
         if (initial) {
             // dispatch mount
-            appendNode(nodeType, vnode, element, createNode(vnode, null, null));
+            // vnode.Type, vnode, container, vnode.DOMNode
+            appendNode(nodeType, vnode, container, createNode(vnode, null, null))
 
             // register mount has been dispatched
-            initial = false;
+            initial = false
 
             // assign component instance
-            component = vnode.instance;
+            component = vnode.instance
         } else {
             // update props
             if (newProps !== void 0) {
                 // component with shouldComponentUpdate
                 if (applyComponentHook(component, 3, newProps, component.state) === false) {
                     // exit early
-                    return renderer;
+                    return renderer
                 }
 
-                component.props = newProps;
+                component.props = newProps
             }
 
             // update component
-            component.forceUpdate();
+            component.forceUpdate()
         }
 
         return component // renderer;
@@ -58,66 +60,45 @@ export default function render(subject, target, callback, hydration) {
 
     // exit early
     if (browser === false) {
-        return renderer;
+        return renderer
     }
     // Try to convert the first parameter to the virtual DOM
-    // h('type', null, []) ==> createElementShape
-    // h(Scoller, null, []) === > createComponentShape
-    // Booleans, Null, and Undefined ==> createEmptyShape
-    // String, Number ===> createTextShape
-    if (subject.render !== void 0) {//这情况一般出现在new一个class作为render第一个参数时出现，目前有bug
-        vnode = createComponentShape(createClass(subject, null), objEmpty, arrEmpty);
-    }
-    // array/component/function
-    else if (subject.Type === void 0) {
-        // array
-        if (Array.isArray(subject)) {
-            throw 'The first argument can\'t be an array'
-        }
-        // component/function
-        else {
-            vnode = createComponentShape(subject, objEmpty, arrEmpty);
-        }
-    }
-    // element/component
-    else {
-        vnode = subject;
-    }
+    vnode = extractVirtualNode(subject)
 
     // Encapsulated into components, in order to use forceUpdate inside the render
     if (vnode.Type !== 2) {
-        vnode = createComponentShape(createClass(vnode, null), objEmpty, arrEmpty);
+        vnode = createComponentShape(createClass(vnode, null), objEmpty, arrEmpty)
     }
 
     // mount
     if (target != null && target.nodeType != null) {
-        // target is a dom element
-        element = target === document ? docuemnt.body : target;
+        // target is a dom container
+        container = target === document ? docuemnt.body : target
     }
     // hydration
     if (hydration != null && hydration !== false) {
         // dispatch hydration
-        hydrate(element, vnode, typeof hydration === 'number' ? hydration : 0, null, null);
+        hydrate(container, vnode, typeof hydration === 'number' ? hydration : 0, null, null)
 
         // register mount has been dispatched
-        initial = false;
+        initial = false
 
         // assign component
-        component = vnode.instance;
+        component = vnode.instance
     } else {
         // destructive mount
-        if (hydration === false) {
-            while (element.firstChild) {
-                element.removeChild(element.firstChild)//此时element是根容器，target | ducument.body
-            }
+        //  if (hydration === false) {
+        while (container.firstChild) {
+            container.removeChild(container.firstChild)
         }
+        //   }
 
-        renderer();
+        renderer()
     }
 
     // if present call root components context, passing root node as argument
     if (callback && typeof callback === 'function') {
-        callback.call(component, vnode.DOMNode || target);
+        callback.call(component, vnode.DOMNode || target)
     }
 
     return component //renderer;

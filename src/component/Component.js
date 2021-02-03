@@ -1,47 +1,40 @@
 import applyComponentHook from './lifecycle'
 import { assignDefaultProps } from '../props'
-import { extractRenderNode } from '../extract'
+import { applyComponentRender } from '../extract'
 import { replaceRootNode } from '../vnode'
 import { reconcileNodes } from '../reconcile'
 import { objEmpty, arrEmpty } from '../shapes'
-//用到objEmpty
+
 /**
  * Component class
- *
- * @public
  * 
- * @param {Object<string, any>=} props
+ * @public
+ * @export
+ * @param {Object} props
  */
 export default function Component(props) {
     // initial props
     if (props === objEmpty) {
         props = {}
     }
-    // |this| used uninitialized in Hello class constructor
-    // assign props
-    if (props !== objEmpty) {
-        // hydrate default props
-        if (this.getDefaultProps) {
-            assignDefaultProps(applyComponentHook(this, -1, props), props);
-        }
-
-        applyComponentHook(this, 2, props)
-
-        this.props = props;
-    }
-    // default props
-    else {
-        this.props = this.props || applyComponentHook(this, -1, null) || {}
+    // apply getDefaultProps Hook
+    if (this.getDefaultProps) {
+        var defaultProps = this.getDefaultProps(props === objEmpty ? props : null)
+        assignDefaultProps(defaultProps, props)
     }
 
+    // apply componentWillReceiveProps Hook
+    applyComponentHook(this, 2, props)
+
+    this.props = props
 
     // assign state
-    this.state = this.state || applyComponentHook(this, -2, null) || {}
+    this.state = this.state || applyComponentHook(this, -1, null) || {}
 
 
-    this.refs = null;
+    this.refs = null
 
-    this['--vnode'] = null;
+    this['--vnode'] = null
 }
 
 
@@ -54,7 +47,7 @@ Component.prototype = {
     constructor: Component,
     setState: setState,
     forceUpdate: forceUpdate
-};
+}
 
 
 /**
@@ -72,7 +65,7 @@ function setState(newState, callback) {
     }
 
     // update state
-    updateState(this.state, newState);
+    updateState(this.state, newState)
 
     // callback
     if (typeof callback === 'function') {
@@ -80,20 +73,23 @@ function setState(newState, callback) {
     }
 
     // update component
-    this.forceUpdate();
+    this.forceUpdate()
 }
 
 
 /**
- * update state, hoisted to avoid `for in` deopts
  * 
- * @param {Object} oldState
- * @param {Object} newState
+ * @param {Object|function} oldState
+ * @param {any} newState
  */
 function updateState(oldState, newState) {
     if (oldState != null) {
-        for (var name in newState) {
-            oldState[name] = newState[name];
+        if (typeof newState === 'function') {
+            newState(oldState)
+        } else {
+            for (var name in newState) {
+                oldState[name] = newState[name]
+            }
         }
     }
 }
@@ -110,25 +106,25 @@ function forceUpdate(callback) {
     applyComponentHook(this, 4, this.props, this.state)
 
 
-    var oldNode = this['--vnode'];
-    var newNode = extractRenderNode(this);
+    var oldNode = this['--vnode']
+    var newNode = applyComponentRender(this)
 
-    var newType = newNode.Type;
-    var oldType = oldNode.Type;
+    var newType = newNode.Type
+    var oldType = oldNode.Type
 
     // different root node
     if (newNode.type !== oldNode.nodeName) {
-        replaceRootNode(newNode, oldNode, newType, oldType, this);
+        replaceRootNode(newNode, oldNode, newType, oldType, this)
     }
     // patch node
     else {
         // element root node
         if (oldType !== 3) {
-            reconcileNodes(newNode, oldNode, newType, 1);
+            reconcileNodes(newNode, oldNode, newType, 1)
         }
         // text root node
         else if (newNode.children !== oldNode.children) {
-            oldNode.DOMNode.nodeValue = oldNode.children = newNode.children;
+            oldNode.DOMNode.nodeValue = oldNode.children = newNode.children
         }
     }
 

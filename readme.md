@@ -1,8 +1,7 @@
 #anu
-=====
 启动live-server --middleware=yy
 
-读作 安努 ，苏美尔的主神，创天劈地。
+读作 安努 ，苏美尔的主神，开天辟地。
 
 ```html
 <!DOCTYPE html>
@@ -76,6 +75,47 @@ module.exports = function(req, res, next) {
 			res.end(data)
 		})
 	}
-	else next();
+    else next();
+```
+数组的定义方式 
+```javascript
+ class Hello extends anu.Component {
+    render() {
+        return 1984
+    }
+}
+```
+套嵌的组件
+```javascript
+var h = anu.createElement
+class World extends anu.Component {
+    render() {
+        return 'world'
+    }
+}
+class Hello extends anu.Component {
+    render() {
+        return World
+    }
+}
+window.onload = function() {
+    //render4个参数， vnode, container, callback, clearContainer
+    var result = anu.render(Hello, document.body, null, false)
+    console.log(result)
+}
+```
+Stateless functional components 
+```JAVASCRIPT
+ var h = anu.createElement
+
+function HelloComponent(props /* context */ ) {
+    return h('div', {}, 'Hello', props.name)
+}
+window.onload = function() {
+    //render4个参数， vnode, container, callback, clearContainer
+    var result = anu.render(h(HelloComponent, {
+        name: '111'
+    }), document.body, null, false)
+    console.log(result)
 }
 ```
