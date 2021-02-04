@@ -51,11 +51,9 @@ export default function render(subject, target, callback, hydration) {
 
                 component.props = newProps
             }
-
             // update component
             component.forceUpdate()
         }
-
         return component // renderer;
     }
 

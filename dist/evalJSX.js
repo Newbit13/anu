@@ -20,6 +20,7 @@ const evalJSXInstance = (function () {
                 args += 'var ' + i + ' = args0["' + i + '"];'
         }
         args += 'return ' + output
+        console.log(args);
         try {
             var fn
             if (cacheFns[args]) {

@@ -5,6 +5,8 @@ function HelloComponent(props, context) {
         this: this,
         props: props
     })
+
+    //相当于anu.createElement("div",{},"Hello ",props.name)
 }
 // console.log(HelloComponent({
 //     name: '这是属性'
