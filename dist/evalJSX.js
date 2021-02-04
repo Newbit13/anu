@@ -1,7 +1,7 @@
 import anu from '../src/index';
-
+window.anu = anu;
 //单例HTML标签,多例自定义标签
-function evalJSX() {
+const evalJSXInstance = (function () {
     var rComponent = /^(this|[A-Z])/
     var cacheFns = {}
     var cacheStr = {}
@@ -124,6 +124,6 @@ function evalJSX() {
     }
 
     return evalJSX;
-};
+})();
 
-export default evalJSX;
+export default evalJSXInstance;

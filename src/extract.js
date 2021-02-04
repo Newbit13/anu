@@ -19,7 +19,7 @@ export function applyComponentRender(component) {
 
         console.log('applyComponentRender', component.context)
 
-        return extractVirtualNode(data,
+        return extractVirtualNode(
             component.render(component.props, component.state, component.context),
             component
         )
