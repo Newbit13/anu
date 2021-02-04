@@ -2,13 +2,13 @@ import { cloneElement, createElement, createFactory, isValidElement } from './el
 import { createClass, Component, PureComponent } from './component/index'
 import render from './render'
 
-
+const h = createElement;
 
 
 export default {
     cloneElement,
     createElement,
-    h: createElement,
+    h,
 
     createFactory,
     isValidElement,

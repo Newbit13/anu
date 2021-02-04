@@ -1,6 +1,6 @@
 // https://github.com/snabbdom/snabbdom/blob/master/src/h.ts
 // https://github.com/thysultan/dio.js
-import { createEmptyShape, createPortalShape, createComponentShape, createTextShape } from './shapes'
+import { createEmptyShape, createComponentShape, createTextShape } from './shapes'
 
 import { createElement } from './element/createElement'
 import { createClass, Component } from './component/index'

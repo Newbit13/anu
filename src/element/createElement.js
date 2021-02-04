@@ -1,4 +1,4 @@
-import { nsMath, nsSvg, createElementShape, createEmptyShape, createComponentShape, createFragmentShape } from '../shapes'
+import { nsMath, nsSvg, createElementShape, createEmptyShape, createComponentShape } from '../shapes'
 import createChild from './createChild'
 /**
  * create virtual element

@@ -5,28 +5,13 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
     <script src='./dist/jsx-parser.js'></script>
-    <script src='./dist/evalJSX.js'></script>
-    <script src='./dist/anu.js'></script>
-    <script>
-        function HelloComponent(props, context) {
-            return evalJSX(`<div>Hello {props.name}</div>`, {
-                this: this,
-                props: props
-            })
-        }
-
-        window.onload = function() {
-            var result = anu.render(HelloComponent({
-                name: '这是属性'
-            }), document.body)
-            console.log(result)
-        }
-    </script>
+    <script src='./dist/evalJSX.js' type="module"></script>
+    <script src="./start2.js" type="module"></script>
 </head>
 
 <body>
 
-    <div>这个默认会被清掉</div>
+    <div id="app">这个默认会被清掉</div>
 </body>
 
 </html>

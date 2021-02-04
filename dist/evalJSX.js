@@ -1,8 +1,7 @@
+import anu from '../src/index';
+
 //单例HTML标签,多例自定义标签
-(function(global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-        typeof define === 'function' && define.amd ? define(factory) : global.evalJSX = factory();
-})(this, function() {
+function evalJSX() {
     var rComponent = /^(this|[A-Z])/
     var cacheFns = {}
     var cacheStr = {}
@@ -108,7 +107,7 @@
             var ret = []
             for (var i = 0, el; el = children[i++];) {
                 if (el.type === '#jsx') {
-                    static = false
+                    // static = false
                     if (Array.isArray(el.nodeValue)) {
                         ret[ret.length] = this.genChildren(el.nodeValue, null, ' ')
                     } else {
@@ -125,4 +124,6 @@
     }
 
     return evalJSX;
-});
+};
+
+export default evalJSX;
