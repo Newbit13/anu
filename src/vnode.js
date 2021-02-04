@@ -197,10 +197,9 @@ export function emptyNode(oldNode, oldLength) {
  * @param  {string?}    namespace
  * @return {Node}
  */
-export function createNode(subject, component, namespace) {
+export function createNode(subject, component, namespace, parent) {
     var nodeType = subject.Type
-
-    // create text node element	
+        // create text node element	
     if (nodeType === 3) {
         return subject.DOMNode = document.createTextNode(subject.children)
     }
@@ -215,7 +214,7 @@ export function createNode(subject, component, namespace) {
         return subject.DOMNode = element.cloneNode(true)
 
     } else { // create DOMNode
-        vnode = nodeType === 2 ? extractComponentNode(subject, null, null) : subject
+        vnode = nodeType === 2 ? extractComponentNode(subject, null, parent) : subject
     }
 
     var Type = vnode.Type
@@ -280,20 +279,18 @@ export function createNode(subject, component, namespace) {
             // createScopedStylesheet(component, subject.type, element);
         }
     }
-
     // has children
     if (length !== 0) {
         // append children
         for (var i = 0; i < length; i++) {
             var newChild = children[i]
-
-            // hoisted, clone
+                // hoisted, clone
             if (newChild.DOMNode !== null) {
                 newChild = children[i] = cloneNode(newChild)
             }
 
             // append child
-            appendNode(newChild.Type, newChild, element, createNode(newChild, component, namespace))
+            appendNode(newChild.Type, newChild, element, createNode(newChild, component, namespace, subject))
         }
     }
 

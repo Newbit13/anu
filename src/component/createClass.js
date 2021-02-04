@@ -8,8 +8,8 @@ import Component from './Component'
  *
  * @public
  * 
- * @param  {(Object<string, any>|function(createElement): (Object<string, any>|function))} subject
- * @param  {Object<string, any>=} props
+ * @param  {Object|function} subject
+ * @param  {Object} props
  * @return {function(new:Component, Object<string, any>)}
  */
 export default function createClass(subject, props) {
@@ -33,7 +33,7 @@ export default function createClass(subject, props) {
     var vnode
     var constructor
     var render
-        // numbers, strings, arrays
+        // numbers, strings
     if (type !== 2 && shape.constructor !== Object && shape.render === void 0) {
         shape = extractVirtualNode(shape, { props: props })
     }
@@ -42,8 +42,6 @@ export default function createClass(subject, props) {
     if (type !== 0) {
         // render method
         render = type === 1 ? (vnode = shape, function() { return vnode; }) : shape;
-
-        // new shape
         shape = { render: render };
     } else {
         if (construct = shape.hasOwnProperty('constructor')) {
@@ -57,20 +55,19 @@ export default function createClass(subject, props) {
     }
 
     // create component class
-    function component(props) {
+    function component(props, context) {
         // constructor
         if (construct) {
-            constructor.call(this, props)
+            constructor.call(this, props, context)
         }
 
         // extend Component
-        Component.call(this, props)
+        Component.call(this, props, context)
     }
 
     // extends shape
     component.prototype = shape
-
-    // extends Component class
+        // extends Component class
     shape.setState = Component.prototype.setState
     shape.forceUpdate = Component.prototype.forceUpdate
     component.constructor = Component

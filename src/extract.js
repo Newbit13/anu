@@ -16,11 +16,15 @@ import { objEmpty, arrEmpty } from './shapes'
  */
 export function applyComponentRender(component) {
     try {
-        return extractVirtualNode(
-            component.render(component.props, component.state, component),
+
+        console.log('applyComponentRender', component.context)
+
+        return extractVirtualNode(data,
+            component.render(component.props, component.state, component.context),
             component
         )
     } catch (e) {
+        console.log(e)
         return createEmptyShape()
     }
 
@@ -167,7 +171,6 @@ export function extractComponentNode(subject, instance, parent) {
     // Stateless functional component
     else if (type.constructor === Function && (type.prototype === void 0 || type.prototype.render === void 0)) {
         vnode = extractFunctionNode(type, props)
-
         if (vnode.Type === void 0) {
             // create component
             owner = createClass(vnode, props)
@@ -181,12 +184,12 @@ export function extractComponentNode(subject, instance, parent) {
         owner = type
     }
     // create component instance
-    var component = subject.instance = new owner(props)
 
-    // get render vnodes
+    var component = subject.instance = new owner(props, parent && parent.instance.context)
+        // subject.info.context = component.context
+        // get render vnodes
     var vnode = applyComponentRender(component)
-
-    // if render returns a component, extract component recursive
+        // if render returns a component, extract component recursive
     if (vnode.Type === 2) {
         vnode = extractComponentNode(vnode, component, parent || subject)
     }

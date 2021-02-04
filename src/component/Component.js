@@ -12,25 +12,33 @@ import { objEmpty, arrEmpty } from '../shapes'
  * @export
  * @param {Object} props
  */
-export default function Component(props) {
+export default function Component(props, context) {
     // initial props
     if (props === objEmpty) {
         props = {}
     }
     // apply getDefaultProps Hook
+    // var defaultProps = this.constructor.defaultProps
     if (this.getDefaultProps) {
-        var defaultProps = this.getDefaultProps(props === objEmpty ? props : null)
+        var defaultProps = this.getDefaultProps()
         assignDefaultProps(defaultProps, props)
     }
-
     // apply componentWillReceiveProps Hook
-    applyComponentHook(this, 2, props)
+    context = context || {}
+    if (this.getChildContext) {
+        var childContext = this.getChildContext()
+        for (var i in childContext) {
+            context[i] = childContext[i]
+        }
+    }
+    applyComponentHook(this, 2, props, context)
 
+
+    this.context = context
     this.props = props
 
     // assign state
     this.state = this.state || applyComponentHook(this, -1, null) || {}
-
 
     this.refs = null
 
@@ -59,11 +67,11 @@ Component.prototype = {
  * @param {function(this:Component)=} callback
  */
 function setState(newState, callback) {
+
     // shouldComponentUpdate 
-    if (applyComponentHook(this, 3, this.props, newState) === false) {
+    if (applyComponentHook(this, 3, this.props, newState, this.context) === false) {
         return
     }
-
     // update state
     updateState(this.state, newState)
 
@@ -85,12 +93,13 @@ function setState(newState, callback) {
 function updateState(oldState, newState) {
     if (oldState != null) {
         if (typeof newState === 'function') {
-            newState(oldState)
-        } else {
-            for (var name in newState) {
-                oldState[name] = newState[name]
-            }
+            var fn = newState
+            newState = fn(oldState)
         }
+        for (var name in newState) {
+            oldState[name] = newState[name]
+        }
+
     }
 }
 
@@ -103,7 +112,7 @@ function updateState(oldState, newState) {
  */
 function forceUpdate(callback) {
     // componentWillUpdate
-    applyComponentHook(this, 4, this.props, this.state)
+    applyComponentHook(this, 4, this.props, this.state, this.context)
 
 
     var oldNode = this['--vnode']
@@ -129,7 +138,7 @@ function forceUpdate(callback) {
     }
 
     // componentDidUpdate
-    applyComponentHook(this, 5, this.props, this.state)
+    applyComponentHook(this, 5, this.props, this.state, this.context)
 
     // callback
     if (typeof callback === 'function') {

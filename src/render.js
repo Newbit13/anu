@@ -32,6 +32,7 @@ export default function render(subject, target, callback, hydration) {
         if (initial) {
             // dispatch mount
             // vnode.Type, vnode, container, vnode.DOMNode
+            //console.log(vnode.nodeName, 'initial')
             appendNode(nodeType, vnode, container, createNode(vnode, null, null))
 
             // register mount has been dispatched
@@ -64,8 +65,7 @@ export default function render(subject, target, callback, hydration) {
     }
     // Try to convert the first parameter to the virtual DOM
     vnode = extractVirtualNode(subject)
-
-    // Encapsulated into components, in order to use forceUpdate inside the render
+        // Encapsulated into components, in order to use forceUpdate inside the render
     if (vnode.Type !== 2) {
         vnode = createComponentShape(createClass(vnode, null), objEmpty, arrEmpty)
     }
@@ -87,11 +87,10 @@ export default function render(subject, target, callback, hydration) {
         component = vnode.instance
     } else {
         // destructive mount
-        //  if (hydration === false) {
         while (container.firstChild) {
             container.removeChild(container.firstChild)
         }
-        //   }
+
 
         renderer()
     }
