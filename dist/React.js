@@ -422,6 +422,7 @@
                    } else { //元素节点的比较
                        vnode.action = '更新元素'
                        vnode.dom = diff(old.dom, vnode, context, parentNode, old)
+                       parentNode.insertBefore(vnode.dom, parentNode.children[i].nextSibling)//newbit:修复顺序问题
                    }
                } else if (vnode.type === '#text') { //#text === p
                    var dom = document.createTextNode(vnode.text)
