@@ -12,41 +12,10 @@
         class Hello extends React.Component {
             constructor(props) {
                 super(props)
-                this.state = {
-                    items: [1, 2, 3]
-                }
-            }
-            componentWillMount() {
-                console.log('hello componentWillMount')
-
-            }
-            componentDidMount() {
-                console.log('hello componentDidMount')
-
             }
             render() {
-
-                return React.createElement('div', Object.assign({}, this.props, {
-                        hello: 'hello',
-                        onClick: () => {
-                            var n = getRandomNum(4, 22)
-                            var items = Array(n).fill(1).map((el, index) => index).sort(_ => Math.random() > 0.5)
-                            console.log(items)
-                            this.setState({
-                                items
-                            })
-                        }
-                    }),
-                    this.state.items.map(el => React.createElement('p', null, el)),
-
-                    getRandomNum(2, 10) % 2 == 0 ? React.createElement('span', null, '静态的SPAN') : React.createElement(World), this.props.children)
+                return React.createElement('div', null, React.createElement(World))
             }
-        }
-
-        function getRandomNum(Min, Max) {
-            var Range = Max - Min;
-            var Rand = Math.random();
-            return (Min + Math.round(Rand * Range));
         }
 
 
@@ -54,35 +23,26 @@
             constructor(props) {
                 super(props)
                 this.state = {
-                    world: 'world'
+                    list: [{ key: 1, text: 111 }, { key: 2, text: 222 }]
                 }
             }
-            componentWillUpdate() {
-                console.log('world componentWillUpdate')
-            }
-            componentDidUpdate() {
-                console.log('world componentDidUpdate')
-
-            }
-            componentWillMount() {
-                console.log('world componentWillMount')
-
-            }
-            componentDidMount() {
-                console.log('world componentDidMount')
-
-            }
-            componentWillUnmount() {
-                console.log('world componentWillUnmount')
-
-            }
             render() {
-                return React.createElement('span', null, new Date - 0)
+                return (
+                    React.createElement('div', {
+                        onClick: () => {
+                            this.setState(
+                                { list: [{ key: 2, text: 222 }, { key: 1, text: 111 }] }
+                            )
+                        }
+                    }, this.state.list.map(item => {
+                        return React.createElement('span', { key: item.key }, item.text);
+                    }))
+                )
             }
         }
 
 
-        window.onload = function() {
+        window.onload = function () {
             ReactDOM.render(React.createElement(Hello, null, '!!!'), document.body)
         }
     </script>
